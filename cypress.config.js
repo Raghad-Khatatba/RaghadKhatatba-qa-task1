@@ -1,10 +1,12 @@
 const { defineConfig } = require("cypress");
+const cucumber = require("cypress-cucumber-preprocessor").default;
 
 module.exports = defineConfig({
   e2e: {
    // baseUrl: '',
+   specPattern:"**/*.{feature,cy.js}",
     setupNodeEvents(on, config) {
-      // you can leave this empty or configure plugins here
+         on("file:preprocessor", cucumber());
     },
     screenshotsFolder: 'Myscreenshots',
     videosFolder: 'MyVideos',
