@@ -1,33 +1,31 @@
 import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps'
+import sharedTestActions from '../../../../support/pageObects/sharedTest/action.cy'
+import addWatchesTestAction from '../../../../support/pageObects/addWatchesTest/action.cy'
+import addWatchesTestAssirtion from '../../../../support/pageObects/addWatchesTest/assirtion.cy'
+
+const sharedAction = new sharedTestActions
+const addWatchesAction = new addWatchesTestAction
+const addWatchesAssirtion = new addWatchesTestAssirtion
 
 Given("The user navigated to the Magento website", () => {
-  cy.visit("https://magento.softwaretestingboard.com/")
+  sharedAction.openHomePage();
 })
 
 When("The user hovers on the {string} menu", (menuName) => {
-  cy.contains('a', menuName).trigger('mouseover')
+  sharedAction.hoverOnMenu(menuName)
 })
 
 When("The user selects the {string} option", (option) => {
-  cy.contains('a', option).click({ force: true })
+  sharedAction.clickOnOption(option);
 })
 
 When("The user changes the view to List", () => {
-  cy.get('#mode-list').click()
+addWatchesAction.changeViewToList()
+
 })
 
 Then("The user adds all watches with a price greater than 55 to the cart", () => {
-
-  cy.get(".product-item-info").each(($el, index) => {
-    cy.get(".product-item-info").eq(index).find(".price-wrapper").invoke("text").then((priceText) => {
-      const priceNumber = parseFloat(priceText.replace(/[^0-9.]/g, ""));
-
-      if (priceNumber > 55) {
-        cy.log(`Adding item with price: $${priceNumber}`);
-        cy.get(".product-item-info").eq(index).find("button.tocart").click();
-        cy.wait(5000);
-        cy.contains("You added", { timeout: 10000 }).should("be.visible");
-      }
-    });
-  })
+  addWatchesAction.addWatchesAbovePrice(() => {
+    addWatchesAssirtion.successMessageShouldAppear();
+  });
 });
